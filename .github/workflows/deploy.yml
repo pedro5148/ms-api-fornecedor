@@ -1,0 +1,105 @@
+name: Deploy to AWS ECS
+
+on:
+  push:
+    branches:
+      - teste-ecr
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: api-fornecedor-repo
+  ECS_SERVICE: api-fornecedor-service
+  ECS_CLUSTER: api-fornecedor-cluster
+  CONTAINER_NAME: api-fornecedor
+
+jobs:
+  # Job 1: Integração Contínua - CI (Testes e Qualidade)
+  ci-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar dependências
+        # Entra na pasta src para instalar (conforme sua estrutura)
+        run: |
+          cd src
+          npm install
+
+      # Descomente abaixo se você tiver scripts de teste configurados no package.json
+      # - name: Executar Testes Unitários
+      #   run: |
+      #     cd src
+      #     npm test
+
+  # Job 2: Entrega Contínua (Build & Push para AWS)
+  build-and-deploy:
+    needs: ci-tests # Só roda se os testes passarem
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          # Acessos do laboratorio UFES
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+
+          # Acesso pessoal
+          #aws-access-key-id: ${{ secrets.AWS_KEY }}
+          #aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+
+      - name: Login no Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, Tag e Push da Imagem para o ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }} # Usa o hash do commit como tag (boa prática de versionamento)
+        run: |
+          # Constrói a imagem usando o Dockerfile da raiz
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+          # Envia para a AWS
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+          # Salva a imagem como output para o próximo passo usar
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      # --- AVISO: Os passos abaixo dependem da infraestrutura ECS estar criada ---
+      # Para Blue/Green, usaríamos o 'aws-actions/amazon-ecs-codedeploy-task-definition-deploy'
+      # Por enquanto, deixarei o deploy padrão (Rolling Update) para simplificar o teste inicial
+
+      # - name: Download da Task Definition atual
+      #   run: |
+      #     aws ecs describe-task-definition --task-definition api-fornecedor-task --query taskDefinition > task-definition.json
+
+      # - name: Atualizar nova imagem na Task Definition
+      #   id: task-def
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: task-definition.json
+      #     container-name: ${{ env.CONTAINER_NAME }}
+      #     image: ${{ steps.build-image.outputs.image }}
+
+      # - name: Deploy no Amazon ECS
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+      #     service: ${{ env.ECS_SERVICE }}
+      #     cluster: ${{ env.ECS_CLUSTER }}
+      #     wait-for-service-stability: true

@@ -1,0 +1,92 @@
+[
+  {
+    "nome": "Moura",
+    "cnpj": "21.906.458/0001-84",
+    "telefone": "84 8797-8566",
+    "email": "lavinia32@hotmail.com",
+    "endereco": "Chácara Paulo Barbosa, 22, Freitas do Oeste, Mato Grosso do Sul",
+    "produtos": ["deleniti", "itaque"],
+    "status": "inativo"
+  },
+  {
+    "nome": "Teixeira",
+    "cnpj": "07.912.453/0001-33",
+    "telefone": "+55 (081) 2346-1102",
+    "email": "joao-miguelviana@uol.com.br",
+    "endereco": "Lagoa de Teixeira, 32, Pereira, São Paulo",
+    "produtos": ["veritatis", "expedita", "aut"],
+    "status": "inativo"
+  },
+  {
+    "nome": "Nunes Aragão S/A",
+    "cnpj": "78.925.431/0001-56",
+    "telefone": "(011) 4326 0599",
+    "email": "davi-luiz03@yahoo.com.br",
+    "endereco": "Pátio Paulo Correia, Melo, Bahia",
+    "produtos": ["quaerat", "consequuntur", "voluptates"],
+    "status": "ativo"
+  },
+  {
+    "nome": "Cardoso - ME",
+    "cnpj": "07.862.315/0001-97",
+    "telefone": "+55 (011) 4536 6423",
+    "email": "nunesjoao-pedro@melo.org",
+    "endereco": "Praia de Caldeira, 444, Melo, Pará",
+    "produtos": ["omnis"],
+    "status": "inativo"
+  },
+  {
+    "nome": "da Rosa",
+    "cnpj": "06.531.987/0001-57",
+    "telefone": "84 9870-4050",
+    "email": "azevedogustavo@campos.br",
+    "endereco": "Colônia da Cunha, 944, Lima, Pernambuco",
+    "produtos": ["nesciunt", "architecto"],
+    "status": "inativo"
+  },
+  {
+    "nome": "da Paz",
+    "cnpj": "69.420.781/0001-70",
+    "telefone": "+55 31 8143-2941",
+    "email": "djesus@yahoo.com.br",
+    "endereco": "Morro Caio Fernandes, 46, Rocha, Paraná",
+    "produtos": ["deleniti", "quia", "sed"],
+    "status": "inativo"
+  },
+  {
+    "nome": "Peixoto Souza - ME",
+    "cnpj": "31.597.264/0001-06",
+    "telefone": "+55 21 1143-0763",
+    "email": "isadora71@ig.com.br",
+    "endereco": "Alameda de Duarte, 878, Ramos, Rio Grande do Sul",
+    "produtos": ["aliquam"],
+    "status": "ativo"
+  },
+  {
+    "nome": "Aragão",
+    "cnpj": "14.926.708/0001-82",
+    "telefone": "+55 (051) 8615-5442",
+    "email": "da-motadavi@da.br",
+    "endereco": "Rua de Porto, 19, da Mota, Rio de Janeiro",
+    "produtos": ["quia", "alias", "accusamus"],
+    "status": "inativo"
+  },
+  {
+    "nome": "Costa Rocha Ltda.",
+    "cnpj": "67.349.158/0001-42",
+    "telefone": "0900 064 4860",
+    "email": "lda-cruz@cardoso.br",
+    "endereco": "Vale Moreira, Nascimento Grande, Rondônia",
+    "produtos": ["facilis", "quidem", "amet"],
+    "status": "ativo"
+  },
+  {
+    "nome": "Cardoso",
+    "cnpj": "28.934.105/0001-37",
+    "telefone": "(041) 1589 0714",
+    "email": "xrezende@da.com",
+    "endereco": "Aeroporto Rafaela Porto, da Conceição, Paraná",
+    "produtos": ["aut", "vitae"],
+    "status": "ativo"
+  }
+]
