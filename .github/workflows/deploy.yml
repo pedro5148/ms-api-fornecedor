@@ -1,4 +1,4 @@
-name: Deploy to AWS ECS
+name: Deploy da API na AWS ECS (Multi-Service)
 
 on:
   push:
@@ -8,11 +8,11 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: ms-api-fornecedor-repo
-  ECS_SERVICE: ms-api-fornecedor-service
-  ECS_CLUSTER: ms-api-fornecedor-cluster
+  ECS_TASK_DEFINITION_FAMILY: api-fornecedor-task
   CONTAINER_NAME: ms-api-fornecedor
 
 jobs:
+  # 1. Testes e Qualidade
   ci-tests:
     runs-on: ubuntu-latest
     steps:
@@ -29,67 +29,77 @@ jobs:
           cd src
           npm install
 
-  build-and-deploy:
-    needs: ci-tests # Só roda se os testes passarem
+      # - name: Rodar Testes (Descomente se tiver testes configurados)
+      #   run: npm test
+
+  # 2. Build e Push da Imagem para o ECR
+  build:
+    needs: ci-tests
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
 
     steps:
-      - name: Checkout do código
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Configurar Credenciais AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ env.AWS_REGION }}
-          # Acessos do laboratorio UFES
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-
-          # Acesso pessoal
-          #aws-access-key-id: ${{ secrets.AWS_KEY }}
-          #aws-secret-access-key: ${{ secrets.AWS_SECRET }}
 
       - name: Login no Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, Tag e Push da Imagem para o ECR
+      - name: Build, Tag e Push
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Constrói a imagem usando o Dockerfile da raiz
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-          # Envia para a AWS
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-          # Salva a imagem como output para o próximo passo usar
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # Para Blue/Green, usaríamos o 'aws-actions/amazon-ecs-codedeploy-task-definition-deploy'
-      # Por enquanto, deixarei o deploy padrão (Rolling Update) para simplificar o teste inicial
+  # 3. Deploy para os 3 Serviços (Roda em paralelo)
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        service: [ms-auth-service, ms-users-service, ms-fornecedores-service]
+        cluster: [ms-api-fornecedor-cluster]
 
-      # - name: Download da Task Definition atual
-      #   run: |
-      #     aws ecs describe-task-definition --task-definition api-fornecedor-task --query taskDefinition > task-definition.json
+    steps:
+      - name: Configurar Credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
 
-      # - name: Atualizar nova imagem na Task Definition
-      #   id: task-def
-      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
-      #   with:
-      #     task-definition: task-definition.json
-      #     container-name: ${{ env.CONTAINER_NAME }}
-      #     image: ${{ steps.build-image.outputs.image }}
+      - name: Baixar Task Definition Atual
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION_FAMILY }} --query taskDefinition | jq -r 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' > task-definition.json
 
-      # - name: Deploy no Amazon ECS
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      #   with:
-      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
-      #     service: ${{ env.ECS_SERVICE }}
-      #     cluster: ${{ env.ECS_CLUSTER }}
-      #     wait-for-service-stability: true
+      - name: Atualizar ID da Imagem na Task Definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ needs.build.outputs.image }}
+
+      - name: Deploy no ECS (${{ matrix.service }})
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ matrix.service }}
+          cluster: ${{ matrix.cluster }}
+          wait-for-service-stability: true
