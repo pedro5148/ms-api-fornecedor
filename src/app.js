@@ -27,7 +27,9 @@ app.use(express.static(staticPath));
 app.use('/api/v1/fornecedores', fornecRoute);
 app.use('/api/v1/users', userRoute);
 
-// app.get('/', (req, res) => {});
+app.get('/', (req, res) => {
+    res.status(200).send('API Fornecedor - Ambiente Verde Saudável');
+});
 app.all('*', (req, res, next) => {
     next(new appError(`Nao foi possivel encontrar a pagina ${req.originalUrl}`)); //Lanca o erro para o proximo middleware
 });
