@@ -9,7 +9,19 @@ dotenv.config();
 const userService = new UserService();
 
 const tokenCriado = (user, statusCode, res) => {
-    const token = userService.generateAuthToken(user.id); 
+    const token = userService.generateAuthToken(user.id);
+    const diasExpiracao = Number(process.env.JWT_COOKIE_EXPIRES_IN) || 1;
+
+    const cookieOptions = {
+        expires: new Date(Date.now() + diasExpiracao * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+        sameSite: 'strict'
+    };
+
+    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+    res.cookie('jwt', token, cookieOptions);
+
     const userResponse = user.get({ plain: true });
 
     delete userResponse.pwd;
@@ -19,7 +31,7 @@ const tokenCriado = (user, statusCode, res) => {
 
     res.status(statusCode).json({
         status: 'success',
-        token,
+        //token,
         data: {
             user: userResponse
         }
