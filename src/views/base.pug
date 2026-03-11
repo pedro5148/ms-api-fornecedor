@@ -1,1 +1,18 @@
-h1 Fornecedores
+doctype html
+html(lang='pt-br')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/css/style.css') 
+    title Gestao de Fornecedores | #{title}
+
+  body
+    //- HEADER
+    include _header.pug
+    .divider-orange
+    main.main-content
+      block content //- O conteúdo específico de cada página será inserido aqui
+
+    .divider-orange
+    //- FOOTER
+    include _footer.pug

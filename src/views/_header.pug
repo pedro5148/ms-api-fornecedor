@@ -1,0 +1,24 @@
+header.main-header
+  .container-header
+    //- O recuo coloca a logo DENTRO do container
+    .brand
+      img(src='/images/logo.png', alt='GranSystem Logo')
+
+    .search-wrapper
+      input.search-input(type='text', placeholder='Faça uma busca..')
+      button.search-btn: i.icon-search
+
+    .header-actions
+      //- nav.action-icons
+      //-   a(href="#"): img(src='/images/relatorio.png', alt='Relatórios')
+      //-   a(href="#"): img(src='/images/carrinho.png', alt='Carrinho')
+      //-   a(href="#"): img(src='/images/calculator.png', alt='Calculadora')
+
+      .user-profile
+        //- Estes itens precisam estar DENTRO do user-profile
+        img.avatar(src='/images/pessoa-login.png', alt='Usuário')
+        .login-text
+          span Faça seu 
+          a(href='/login') Login
+          span  ou 
+          a(href='/cadastro') Cadastro

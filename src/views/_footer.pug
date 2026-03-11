@@ -1,0 +1,15 @@
+footer.main-footer
+  .container-footer
+    .footer-left
+      img.footer-logo(src='/images/logo.png', alt='GranSystem Logo')
+
+    .footer-right
+      ul.footer-nav
+        //- As tags 'li' devem estar dentro da 'ul'
+        li: a(href='/sobre') Sobre a GranSystem
+        li: a(href='/suporte') Suporte
+        li: a(href='/termos') Termos de Uso
+        li: a(href='/contato') Contato
+        
+      //- O copyright fica dentro do '.footer-right', mas fora da 'ul'
+      p.footer-copyright &copy; #{new Date().getFullYear()} GranSystem. Feito para o setor de rochas.

@@ -1,0 +1,253 @@
+/* Importação da Fonte */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-dark: #232426;
+  --card-bg: #d9bb84;
+  --btn-color: #736853;
+  --text-light: #ffffff;
+  --text-dark: #1a1a1a;
+  --accent-orange: #f28500;
+}
+
+/* Reset Básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================
+   HEADER
+   ========================================= */
+.main-header {
+  background-color: var(--bg-dark);
+  padding: 20px 40px;
+}
+
+.container-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 20px;
+}
+
+.brand img {
+  height: 40px;
+}
+
+.search-wrapper {
+  display: flex;
+  flex: 1;
+  max-width: 500px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+}
+
+.search-btn {
+  padding: 10px 20px;
+  background-color: var(--btn-color);
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  color: var(--text-light);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.action-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.action-icons img {
+  width: 24px;
+  height: 24px;
+  filter: invert(1);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.login-text a {
+  color: var(--card-bg);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Separadores Laranja */
+.divider-orange {
+  height: 4px;
+  background-color: var(--accent-orange);
+  width: 100%;
+}
+
+/* =========================================
+   CONTEÚDO PRINCIPAL (DASHBOARD)
+   ========================================= */
+.main-content {
+  flex: 1;
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.card-block {
+  background-color: var(--card-bg);
+  color: var(--text-dark);
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-block:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+}
+
+.card-image-wrapper {
+  width: 100%;
+  height: 160px; /* Altura padronizada para todas as imagens */
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  background-color: rgba(0,0,0,0.05); /* Placeholder de carregamento */
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-block h2 {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.card-description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 25px;
+  flex-grow: 1; 
+}
+
+.card-footer {
+  margin-top: auto;
+}
+
+.btn-details {
+  display: block; 
+  width: 100%; 
+  background-color: var(--btn-color);
+  color: var(--text-light);
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-weight: 500;
+  text-align: center;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-details:hover {
+  background-color: #5c5342;
+}
+
+.btn-details:active {
+  transform: scale(0.98);
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+.main-footer {
+  background-color: var(--bg-dark); 
+  padding: 30px 40px;
+  border-top: 1px solid #333; 
+}
+
+.container-footer {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.footer-logo {
+  height: 45px;
+}
+
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; 
+  gap: 15px; 
+}
+
+.footer-nav {
+  list-style: none;
+  display: flex;
+  gap: 25px; 
+}
+
+.footer-nav a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 400;
+  transition: color 0.2s ease;
+}
+
+.footer-nav a:hover {
+  color: var(--card-bg); 
+}
+
+/* Texto de Copyright */
+.footer-copyright {
+  font-size: 0.8rem;
+  color: #888; 
+  text-align: right;
+}

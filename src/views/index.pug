@@ -1,0 +1,22 @@
+//- index.pug
+extends base
+
+block content
+  .dashboard-container
+    each fornec in fornecedores
+      section.card-block.card-action
+        .card-image-wrapper
+          img.card-image(src='/images/material-quotes.png', alt='Imagem de Cotações')
+      
+        h2 #{fornec.nome}
+
+        .card-description
+          p #[strong Documento:] #{fornec.cnpj}
+          p #[strong Contato:] #{fornec.email}
+          p #[strong Cidade/UF:] #{fornec.cidade} - #{fornec.uf}
+
+        .card-footer
+          a.btn-details(href=`/fornecedores/${fornec.id}`) Mais Detalhes
+    else
+      .empty-state
+        p Nenhum fornecedor encontrado no banco de dados no momento.
